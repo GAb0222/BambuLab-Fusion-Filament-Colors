@@ -1,7 +1,7 @@
 {
   "autodeskProduct": "Fusion360",
   "type": "addin",
-  "author": "OpenAI",
+  "author": "Gabriel Fourier",
   "description": {
     "": "Bambu Native appearances with complete parent export to Fusion F3D and single-file 3MF."
   },

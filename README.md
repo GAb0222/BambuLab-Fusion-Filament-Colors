@@ -194,6 +194,10 @@ Distributed under the **MIT** license.
 
 See `LICENSE`.
 
+## Author
+
+Created and maintained by **Gabriel Fourier** ([GAb0222](https://github.com/GAb0222)).
+
 ## Trademarks
 
 **Bambu Lab** is a trademark of its respective owners.
