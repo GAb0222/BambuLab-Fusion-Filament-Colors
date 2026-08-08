@@ -1,25 +1,27 @@
 # BambuLab Fusion Filament Colors
 
-Complément open source pour **Autodesk Fusion** permettant d'appliquer rapidement des couleurs de filaments **Bambu Lab** à vos modèles 3D depuis un panneau visuel intégré.
+**Languages:** [English](README.md) · [Français](README.fr.md)
 
-> Projet communautaire non officiel. Ce projet n'est ni affilié, ni approuvé, ni maintenu par Bambu Lab ou Autodesk.
+Open-source **Autodesk Fusion** add-in to quickly apply **Bambu Lab** filament colors to your 3D models from a built-in visual panel.
 
-## Fonctionnalités
+> Unofficial community project. Not affiliated with, endorsed by, or maintained by Bambu Lab or Autodesk.
 
-- Catalogue visuel des filaments Bambu Lab
-- Plus de **270 références** réparties dans de nombreuses gammes
-- Recherche par nom de couleur ou matière
-- Filtres par famille et gamme
-- Aperçu visuel des couleurs
-- Gestion des matériaux translucides
-- Gestion visuelle des gradients et multicolores
-- Apparences basées sur des apparences natives Autodesk
-- Application à une face, un corps, un composant, une sélection ou tout le modèle visible
-- Commande Fusion dédiée
-- Raccourci clavier personnalisable, par exemple `⌘B` sur macOS
-- Export du modèle complet en `.f3d` et `.3mf`
+## Features
 
-## Gammes incluses
+- Visual Bambu Lab filament catalog
+- **270+** references across many product lines
+- Search by color name or material
+- Filters by family and product line
+- Visual color preview
+- Translucent material handling
+- Visual handling of gradients and multi-colors
+- Appearances based on native Autodesk appearances
+- Apply to a face, body, component, selection, or the entire visible model
+- Dedicated Fusion command
+- Customizable keyboard shortcut, e.g. `⌘B` on macOS
+- Full model export to `.f3d` and `.3mf`
+
+## Included product lines
 
 ### PLA
 PLA Basic, PLA Lite, PLA Matte, PLA Basic Gradient, PLA Glow, PLA Marble, PLA Aero, PLA Sparkle, PLA Metal, PLA Translucent, PLA Silk+, PLA Silk Multi-Color, PLA Galaxy, PLA Wood, PLA-CF, PLA Tough, PLA Tough+, PLA Pure.
@@ -27,7 +29,7 @@ PLA Basic, PLA Lite, PLA Matte, PLA Basic Gradient, PLA Glow, PLA Marble, PLA Ae
 ### PETG
 PETG Basic, PETG HF, PETG Translucent, PETG-CF.
 
-### Matériaux techniques
+### Engineering materials
 ABS, ABS-GF, ASA, ASA Aero, ASA-CF, PC, PC FR, TPU for AMS, PAHT-CF, PA6-GF, PPA-CF, PPS-CF.
 
 ### Supports
@@ -35,85 +37,85 @@ Support for PLA, Support for PLA/PETG, Support for ABS, Support for PA/PET, PVA.
 
 ## Installation
 
-1. Téléchargez ou clonez ce dépôt.
-2. Ouvrez Autodesk Fusion.
-3. Allez dans `Utilitaires > Scripts et compléments`.
-4. Cliquez sur `+`.
-5. Choisissez `Script ou complément à partir de l'appareil`.
-6. Sélectionnez le dossier du complément.
-7. Ouvrez l'onglet **Compléments**.
-8. Sélectionnez **Bambu Lab Filaments**.
-9. Cliquez sur **Exécuter**.
+1. Download or clone this repository.
+2. Open Autodesk Fusion.
+3. Go to `Utilities > Scripts and Add-Ins`.
+4. Click `+`.
+5. Choose `Script or add-in from device`.
+6. Select the add-in folder.
+7. Open the **Add-Ins** tab.
+8. Select **Bambu Lab Filaments**.
+9. Click **Run**.
 
-## Utilisation
+## Usage
 
-1. Sélectionnez une face, un corps ou un composant.
-2. Choisissez le niveau d'application dans le panneau.
-3. Recherchez un filament.
-4. Cliquez sur sa couleur.
+1. Select a face, body, or component.
+2. Choose the application level in the panel.
+3. Search for a filament.
+4. Click its color.
 
-Les apparences créées utilisent un nom du type :
+Created appearances use names like:
 
 ```text
 Bambu Native | PLA Basic | Red | #C12E1F
 ```
 
-## Niveau d'application
+## Application level
 
-| Mode | Comportement |
+| Mode | Behavior |
 | --- | --- |
-| Face(s) | Applique uniquement aux faces sélectionnées |
-| Corps / objet | Applique au corps sélectionné |
-| Composant entier | Applique à tous les corps du composant |
-| Toute la sélection | Applique à tous les éléments sélectionnés |
-| Tout le modèle visible | Applique à tous les corps visibles |
+| Face(s) | Applies only to selected faces |
+| Body / object | Applies to the selected body |
+| Entire component | Applies to all bodies in the component |
+| Entire selection | Applies to all selected items |
+| Entire visible model | Applies to all visible bodies |
 
-## Raccourci clavier
+## Keyboard shortcut
 
-Le complément crée une commande Fusion nommée `Bambu Lab Filaments`.
+The add-in creates a Fusion command named `Bambu Lab Filaments`.
 
-Vous pouvez lui associer un raccourci, par exemple `⌘B` sur macOS.
+You can assign a shortcut to it, for example `⌘B` on macOS.
 
-> L'API Fusion ne permet pas au complément d'imposer automatiquement le raccourci.
+> The Fusion API does not allow the add-in to set the shortcut automatically.
 
-## Apparences Autodesk natives
+## Native Autodesk appearances
 
-Le complément cherche une apparence compatible dans la bibliothèque Autodesk, la copie dans le design avec `addByCopy()`, puis modifie sa couleur.
+The add-in finds a compatible appearance in the Autodesk library, copies it into the design with `addByCopy()`, then updates its color.
 
-Cette approche vise une meilleure compatibilité avec le comportement natif de Fusion.
+This approach aims for better compatibility with Fusion’s native behavior.
 
-## Translucence
+## Translucency
 
-Les gammes translucides disposent d'un aperçu spécifique dans le panneau.
+Translucent product lines have a dedicated preview in the panel.
 
-Exemples :
+Examples:
 - PLA Translucent
 - PETG Translucent
 - PC Transparent
 
 ## Export
 
-Le panneau propose :
+The panel offers:
 
 ### Fusion Archive
 ```text
-Projet_PARENT.f3d
+Project_PARENT.f3d
 ```
 
 ### 3MF
 ```text
-Projet_PARENT.3mf
+Project_PARENT.3mf
 ```
 
-Le composant racine est exporté dans un seul fichier 3MF avec l'exporteur natif de Fusion.
+The root component is exported as a single 3MF file using Fusion’s native exporter.
 
-## À propos du STL
+## About STL
 
-Le STL est adapté au maillage géométrique, mais pas au transport fiable des apparences et couleurs.
+STL is fine for geometry meshes, but not reliable for appearances and colors.
 
-Pour conserver davantage d'informations du modèle, privilégiez `.3mf` ou `.f3d`.
+Prefer `.3mf` or `.f3d` to keep more model information.
 
-## Structure du projet
+## Project structure
 
 ```text
 BambuLab-Fusion-Filament-Colors/
@@ -122,15 +124,16 @@ BambuLab-Fusion-Filament-Colors/
 ├── bambulab_full_catalog.json
 ├── palette.html
 ├── README.md
+├── README.fr.md
 ├── LICENSE
 └── .gitignore
 ```
 
-## Catalogue
+## Catalog
 
-Les données sont stockées dans `bambulab_full_catalog.json`.
+Data lives in `bambulab_full_catalog.json`.
 
-Exemple :
+Example:
 
 ```json
 {
@@ -144,57 +147,57 @@ Exemple :
 }
 ```
 
-Certaines entrées disposent d'un HEX exact ; d'autres utilisent une approximation visuelle lorsqu'une valeur publique fiable n'était pas disponible.
+Some entries have an exact HEX value; others use a visual approximation when no reliable public value was available.
 
-## Compatibilité
+## Compatibility
 
 - macOS
 - Windows
-- Autodesk Fusion avec API Python
+- Autodesk Fusion with Python API
 
-## Contribuer
+## Contributing
 
-Les contributions sont bienvenues : correction de couleurs, nouvelles gammes, améliorations UI, compatibilité Fusion, gestion des matériaux et exports.
+Contributions are welcome: color fixes, new product lines, UI improvements, Fusion compatibility, material handling, and exports.
 
 ```bash
 git clone https://github.com/GAb0222/BambuLab-Fusion-Filament-Colors.git
 cd BambuLab-Fusion-Filament-Colors
-git checkout -b feature/ma-modification
+git checkout -b feature/my-change
 ```
 
-Puis ouvrez une Pull Request.
+Then open a Pull Request.
 
-## Signaler un bug
+## Report a bug
 
-Indiquez si possible :
-- version de Fusion ;
-- macOS ou Windows ;
-- filament concerné ;
-- étapes de reproduction ;
-- capture d'écran ;
-- message d'erreur.
+Please include when possible:
+- Fusion version
+- macOS or Windows
+- filament involved
+- steps to reproduce
+- screenshot
+- error message
 
 ## Roadmap
 
-- mise à jour automatique du catalogue Bambu Lab ;
-- synchronisation avec les profils Bambu Studio ;
-- favoris ;
-- historique des couleurs utilisées ;
-- rendu amélioré Silk / Sparkle / Galaxy ;
-- export avancé vers Bambu Studio ;
-- palettes personnalisées ;
-- support d'autres fabricants.
+- automatic Bambu Lab catalog updates
+- sync with Bambu Studio profiles
+- favorites
+- recently used colors
+- improved Silk / Sparkle / Galaxy rendering
+- advanced export to Bambu Studio
+- custom palettes
+- support for other manufacturers
 
-## Licence
+## License
 
-Distribué sous licence **MIT**.
+Distributed under the **MIT** license.
 
-Voir `LICENSE`.
+See `LICENSE`.
 
-## Marques
+## Trademarks
 
-**Bambu Lab** est une marque de ses propriétaires respectifs.
+**Bambu Lab** is a trademark of its respective owners.
 
-**Autodesk** et **Fusion** sont des marques d'Autodesk, Inc.
+**Autodesk** and **Fusion** are trademarks of Autodesk, Inc.
 
-Ce projet est communautaire, indépendant et non officiel.
+This is an independent, unofficial community project.

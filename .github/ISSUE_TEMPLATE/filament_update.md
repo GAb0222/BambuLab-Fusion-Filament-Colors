@@ -1,18 +1,18 @@
 ---
-name: Filament / couleur
-about: Ajouter ou corriger un filament Bambu Lab
+name: Filament / color
+about: Add or fix a Bambu Lab filament / Ajouter ou corriger un filament Bambu Lab
 title: "[FILAMENT] "
 labels: filament
 ---
 
-## Gamme
+## Product line / Gamme
 
-## Nom de la couleur
+## Color name / Nom de la couleur
 
-## Référence / SKU
+## Reference / SKU / Référence
 
-## HEX proposé
+## Proposed HEX / HEX proposé
 
 ## Source
 
-## Commentaire
+## Comment / Commentaire

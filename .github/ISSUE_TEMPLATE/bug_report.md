@@ -1,26 +1,26 @@
 ---
 name: Bug report
-about: Signaler un problème avec le complément Fusion
+about: Report an issue with the Fusion add-in / Signaler un problème avec le complément Fusion
 title: "[BUG] "
 labels: bug
 ---
 
-## Version de Fusion
+## Fusion version / Version de Fusion
 
-## Système
+## System / Système
 - [ ] macOS
 - [ ] Windows
 
 ## Description
 
-## Étapes pour reproduire
+## Steps to reproduce / Étapes pour reproduire
 
 1.
 2.
 3.
 
-## Résultat attendu
+## Expected result / Résultat attendu
 
-## Résultat obtenu
+## Actual result / Résultat obtenu
 
-## Capture / message d'erreur
+## Screenshot / error message / Capture / message d'erreur
