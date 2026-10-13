@@ -1,9 +1,50 @@
 # -*- coding: utf-8 -*-
-import adsk.core, adsk.fusion, json, os, traceback
-PALETTE_ID='BambuLabNativePaletteV10';CMD_ID='BambuLabNativeV10';handlers=[]
+import json
+import os
+import sys
+import time
+import importlib.util
+from pathlib import Path
+import adsk.core
+import adsk.fusion
+
+
+def _load_i18n_symbols():
+    try:
+        from BambuLabNativeV10_i18n import  _getText,_ensure_lang
+        return _getText,_ensure_lang
+    except Exception:
+        pass
+
+    module_name = 'BambuLabNativeV10_i18n'
+    module_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), module_name + '.py')
+    module_dir = os.path.dirname(module_path)
+    if module_dir and module_dir not in sys.path:
+        sys.path.insert(0, module_dir)
+
+    spec = importlib.util.spec_from_file_location(module_name, module_path)
+    if not spec or not spec.loader:
+        raise ImportError('Could not load i18n module: ' + module_path)
+
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return getattr(mod, '_getText'), getattr(mod, '_ensure_lang')
+
+
+_getText, _ensure_lang = _load_i18n_symbols()
+
+PALETTE_ID='BambuLabNativePaletteV10'
+CMD_ID='BambuLabNativeV10'
+handlers=[]
 
 def C(h,a=255):
-    h=h.lstrip('#');return adsk.core.Color.create(int(h[:2],16),int(h[2:4],16),int(h[4:6],16),a)
+    h=h.lstrip('#')
+    return adsk.core.Color.create(int(h[:2],16),int(h[2:4],16),int(h[4:6],16),a)
+
+# On Windows, the path comes with backslashes, so we need to replace them with forward slashes for the file URL.
+# Otherwise when Fusion is running on Windows, it fails to find the palette.
+def make_file_url(path):
+    return Path(path).as_uri()
 
 def _find_native_base(translucent=False):
     """
@@ -166,11 +207,11 @@ def _all_visible_bodies(design):
         pass
     return bodies
 
-def apply_sel(a, scope='auto'):
+def apply_sel(a, scope='auto', sel=None):
     app=adsk.core.Application.get()
     ui=app.userInterface
     design=adsk.fusion.Design.cast(app.activeProduct)
-    s=ui.activeSelections
+    s=sel or ui.activeSelections
     n=0
 
     # Entire model, no selection required.
@@ -181,13 +222,13 @@ def apply_sel(a, scope='auto'):
                 n+=1
             except:
                 pass
-        return f'Appliqué à {n} corps visibles du modèle.' if n else 'Aucun corps visible trouvé.'
+        return _getText('apply_all_model_success',n=n) if n else _getText('apply_all_model_none')
 
     if s.count==0:
-        return 'Sélectionne d’abord une face, un corps ou un composant.'
+        return _getText('select_prompt')
 
     for i in range(s.count):
-        e=s.item(i).entity
+        e=s.item(i)
         try:
             # FACE ONLY
             if scope=='face':
@@ -263,13 +304,13 @@ def apply_sel(a, scope='auto'):
             pass
 
     labels={
-        'face':'face(s)',
-        'body':'corps/objet(s)',
-        'component':'corps du/des composant(s)',
-        'selected_all':'élément(s) sélectionné(s)',
-        'auto':'élément(s)'
+        'face':_getText('label_face'),
+        'body':_getText('label_body'),
+        'component':_getText('label_component'),
+        'selected_all':_getText('label_selected_all'),
+        'auto':_getText('label_auto')
     }
-    return f"Appliqué à {n} {labels.get(scope,'élément(s)')}." if n else 'La sélection ne correspond pas au mode choisi.' 
+    return _getText('apply_scope_success',n=n,label=labels.get(scope,_getText('label_auto'))) if n else _getText('selection_mode_mismatch') 
 
 
 def _safe_doc_name(name):
@@ -280,7 +321,7 @@ def _safe_doc_name(name):
 
 def _pick_folder(ui):
     dlg=ui.createFolderDialog()
-    dlg.title='Choisir le dossier d’export du modèle Bambu'
+    dlg.title=_getText('pick_folder_title')
     if dlg.showDialog()!=adsk.core.DialogResults.DialogOK:
         return None
     return dlg.folder
@@ -309,11 +350,11 @@ def export_parent(kind='bundle'):
     ui=app.userInterface
     design=adsk.fusion.Design.cast(app.activeProduct)
     if not design:
-        return False,'Ouvre un design Fusion.'
+        return False,_getText('open_design')
 
     folder=_pick_folder(ui)
     if not folder:
-        return False,'Export annulé.'
+        return False,_getText('export_cancelled')
 
     doc=app.activeDocument
     base=_safe_doc_name(doc.name if doc else 'Bambu_Model')
@@ -343,81 +384,155 @@ def export_parent(kind='bundle'):
     if kind=='bundle':
         try:
             with open(os.path.join(folder,'BAMBU_PARENT_EXPORT_README.txt'),'w',encoding='utf-8') as f:
-                f.write(
-                    "BAMBU LAB / FUSION — EXPORT PARENT\n\n"
-                    f"Projet : {base}\n\n"
-                    "Le fichier *_PARENT.f3d est le fichier parent Fusion natif.\n"
-                    "Le fichier *_PARENT.3mf contient le root component exporté en un seul 3MF.\n\n"
-                    "Pour tester les apparences V10, vérifie qu'elles commencent par :\n"
-                    "Bambu Native |\n"
-                )
+                f.write(_getText('export_readme',base=base))
         except:
             pass
 
     msg=''
     if done:
-        msg+='Export réussi : '+', '.join(done)
+        msg+=_getText('export_done')+', '.join(done)
     if failed:
         if msg: msg+=' · '
-        msg+='Échec : '+' | '.join(failed)
-    msg+=f' · Dossier : {folder}'
+        msg+=_getText('export_failed')+' | '.join(failed)
+    msg+=' · '+_getText('export_folder',folder=folder)
     return len(done)>0,msg
 
-class PH(adsk.core.HTMLEventHandler):
-    def notify(self,args):
-        try:
-            app=adsk.core.Application.get();ui=app.userInterface
+def _read_catalog_json_text():
+    try:
+        path=os.path.join(os.path.dirname(os.path.realpath(__file__)),'bambulab_full_catalog.json')
+        with open(path,'r',encoding='utf-8') as f:
+            return f.read()
+    except:
+        return '[]'
 
-            if args.action in ('export_parent_f3d','export_parent_3mf','export_parent_bundle'):
-                kind='f3d' if args.action=='export_parent_f3d' else ('3mf' if args.action=='export_parent_3mf' else 'bundle')
-                ok,msg=export_parent(kind)
+def _build_catalog_payload_text():
+    raw=_read_catalog_json_text()
+    try:
+        entries=json.loads(raw)
+        if not isinstance(entries,list):
+            entries=[]
+    except:
+        entries=[]
+
+    try:
+        path=os.path.join(os.path.dirname(os.path.realpath(__file__)),'bambulab_full_catalog.json')
+        mtime=int(os.path.getmtime(path))
+    except:
+        mtime=0
+
+    payload={
+        'schema_version':1,
+        'catalog_version':str(mtime),
+        'generated_epoch':int(time.time()),
+        'entry_count':len(entries),
+        'entries':entries
+    }
+    try:
+        return json.dumps(payload,ensure_ascii=False)
+    except:
+        return '{"schema_version":1,"catalog_version":"0","generated_epoch":0,"entry_count":0,"entries":[]}'
+
+class PH(adsk.core.HTMLEventHandler):
+    def notify(self, eventArgs):
+        try:
+            app=adsk.core.Application.get()
+            ui=app.userInterface
+
+            if eventArgs.action=='request_lang':
                 p=ui.palettes.itemById(PALETTE_ID)
-                if p:p.sendInfoToHTML('status',msg)
+                lang = _ensure_lang()
+                if p:
+                    p.sendInfoToHTML('setLang', lang)
                 adsk.doEvents()
                 return
 
-            if args.action!='apply':return
+            if eventArgs.action=='request_catalog':
+                p=ui.palettes.itemById(PALETTE_ID)
+                if p:
+                    p.sendInfoToHTML('catalog',_build_catalog_payload_text())
+                adsk.doEvents()
+                return
+
+            if eventArgs.action in ('export_parent_f3d','export_parent_3mf','export_parent_bundle'):
+                kind='f3d' if eventArgs.action=='export_parent_f3d' else ('3mf' if eventArgs.action=='export_parent_3mf' else 'bundle')
+                _, msg = export_parent(kind)
+                p=ui.palettes.itemById(PALETTE_ID)
+                if p:
+                    p.sendInfoToHTML('status',msg)
+                adsk.doEvents()
+                return
+
+            if eventArgs.action!='apply':return
+            # We need to cache the selection here because during the appearance copy process
+            # "something" in Fusion will remove the selection, so we cache it here.
+            sel = adsk.core.Application.get().userInterface.activeSelections.all
             design=adsk.fusion.Design.cast(app.activeProduct)
-            d=json.loads(args.data);a=get_app(design,d)
-            msg=apply_sel(a, d.get('scope','auto')) if a else "Impossible de créer l'apparence."
+            d=json.loads(eventArgs.data)
+            a=get_app(design,d)
+            msg=apply_sel(a, d.get('scope','auto'), sel) if a else _getText('appearance_create_failed')
             p=ui.palettes.itemById(PALETTE_ID)
-            if p:p.sendInfoToHTML('status',f"NATIVE · {d['material']} · {d['color_name']} — {msg}")
+            if p:
+                p.sendInfoToHTML('status',f"{_getText('native_tag')} · {d['material']} · {d['color_name']} - {msg}")
             adsk.doEvents()
+            # Restore the cached selection after applying the appearance.
+            adsk.core.Application.get().userInterface.activeSelections.all = sel
         except:
             pass
 
 class CH(adsk.core.CommandCreatedEventHandler):
-    def notify(self,args):
-        app=adsk.core.Application.get();ui=app.userInterface;p=ui.palettes.itemById(PALETTE_ID)
+    def notify(self, eventArgs):
+        app=adsk.core.Application.get()
+        ui=app.userInterface
+        p=ui.palettes.itemById(PALETTE_ID)
         if not p:
             path=os.path.join(os.path.dirname(os.path.realpath(__file__)),'palette.html')
-            p=ui.palettes.add(PALETTE_ID,'Bambu Lab Filaments',path,True,True,True,520,720,True)
+            palette_path=make_file_url(path)
+            p=ui.palettes.add(PALETTE_ID,_getText('palette_title'),palette_path,True,True,True,520,720,True)
             p.dockingState=adsk.core.PaletteDockingStates.PaletteDockStateRight
-            h=PH();p.incomingFromHTML.add(h);handlers.append(h)
+            h=PH()
+            p.incomingFromHTML.add(h)
+            handlers.append(h)
             p.isVisible=True
+            try:
+                p.sendInfoToHTML('setLang', _ensure_lang())
+                adsk.doEvents()
+            except:
+                pass
+            try:
+                p.sendInfoToHTML('catalog',_build_catalog_payload_text())
+                adsk.doEvents()
+            except:
+                pass
         else:
             # Command works as a toggle: Command+B can open OR close the palette.
             p.isVisible=not p.isVisible
 
 def run(context):
-    app=adsk.core.Application.get();ui=app.userInterface
+    app=adsk.core.Application.get()
+    ui=app.userInterface
     d=ui.commandDefinitions.itemById(CMD_ID)
     if not d:
         d=ui.commandDefinitions.addButtonDefinition(
             CMD_ID,
-            'Bambu Lab Filaments NATIVE',
-            'Apparences Bambu clonées depuis la bibliothèque native Autodesk. Raccourci conseillé : ⌘B.'
+            _getText('command_name'),
+            _getText('command_description')
         )
-    h=CH();d.commandCreated.add(h);handlers.append(h)
+    h=CH()
+    d.commandCreated.add(h)
+    handlers.append(h)
 
     # Add a persistent toolbar button in the Solid > Modify panel when available.
     panel=ui.allToolbarPanels.itemById('SolidModifyPanel')
     if panel and not panel.controls.itemById(CMD_ID):
         c=panel.controls.addCommand(d)
-        try:c.isPromoted=True
-        except:pass
-        try:c.isPromotedByDefault=True
-        except:pass
+        try:
+            c.isPromoted=True
+        except:
+            pass
+        try:
+            c.isPromotedByDefault=True
+        except:
+            pass
 
     # Open palette on first load.
     d.execute()
@@ -426,11 +541,14 @@ def stop(context):
     try:
         ui=adsk.core.Application.get().userInterface
         p=ui.palettes.itemById(PALETTE_ID)
-        if p:p.deleteMe()
+        if p:
+            p.deleteMe()
         panel=ui.allToolbarPanels.itemById('SolidModifyPanel')
         if panel:
             c=panel.controls.itemById(CMD_ID)
-            if c:c.deleteMe()
+            if c:
+                c.deleteMe()
         d=ui.commandDefinitions.itemById(CMD_ID)
-        if d:d.deleteMe()
+        if d:
+            d.deleteMe()
     except:pass

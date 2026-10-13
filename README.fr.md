@@ -33,7 +33,7 @@ PETG Basic, PETG HF, PETG Translucent, PETG-CF.
 ABS, ABS-GF, ASA, ASA Aero, ASA-CF, PC, PC FR, TPU for AMS, PAHT-CF, PA6-GF, PPA-CF, PPS-CF.
 
 ### Supports
-Support for PLA, Support for PLA/PETG, Support for ABS, Support for PA/PET, PVA.
+Support pour PLA, Support pour PLA/PETG, Support pour ABS, Support pour PA/PET, PVA.
 
 ## Installation
 
@@ -142,12 +142,24 @@ Exemple :
   "material": "PLA Basic",
   "color_name": "Red",
   "hex": "#C12E1F",
+  "hexes": ["#C12E1F"],
   "finish": "standard",
-  "translucent": false
+  "translucent": false,
+  "opacity": 1.0,
+  "roughness": 0.44,
+  "hex_quality": "exact",
+  "category_i18n": { "en": "PLA", "fr": "PLA" },
+  "material_i18n": { "en": "PLA Basic", "fr": "PLA Basic" },
+  "color_name_i18n": { "en": "Red", "fr": "Red" },
+  "is_multi_color": false,
+  "ui_badges": [],
+  "search_text": "pla pla basic red"
 }
 ```
 
 Certaines entrées disposent d'un HEX exact ; d'autres utilisent une approximation visuelle lorsqu'une valeur publique fiable n'était pas disponible.
+
+Les champs utiles à l'interface utilisateur sont maintenant explicitement définis dans le catalogue (`*_i18n`, `is_multi_color`, `ui_badges`, `search_text`) pour pouvoir générer le panneau depuis le JSON sans duplication HTML.
 
 ## Compatibilité
 
